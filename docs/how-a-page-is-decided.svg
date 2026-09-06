@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470" font-family="Helvetica, Arial, sans-serif">
+  <rect width="900" height="470" fill="#ffffff"/>
+  <text x="24" y="32" font-size="16" font-weight="bold" fill="#1a1a1a">How a page is decided</text>
+  <text x="24" y="52" font-size="11.5" fill="#5f6368">Illustration: a synthetic form, not a real client document. The failure mode this pipeline is built around is a</text>
+  <text x="24" y="68" font-size="11.5" fill="#5f6368">correctly-read number taken from the wrong field.</text>
+
+  <!-- ============ mock page ============ -->
+  <rect x="24" y="88" width="330" height="352" rx="4" fill="#fbfbfc" stroke="#c9ced4" stroke-width="1.2"/>
+
+  <!-- title block (unreadable script) -->
+  <rect x="120" y="104" width="140" height="9" rx="2" fill="#c9ced4"/>
+  <rect x="145" y="118" width="90" height="7" rx="2" fill="#dde1e6"/>
+  <text x="264" y="126" font-size="8.5" fill="#9aa1a9">title: unreadable</text>
+
+  <!-- measured band -->
+  <rect x="34" y="136" width="310" height="40" fill="#e8f3ea" stroke="#4a9c5d" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <text x="40" y="150" font-size="8.5" fill="#3f7a4e">measured number band  y 0.00-0.11,  x &gt; 0.55</text>
+  <rect x="243" y="152" width="62" height="20" rx="2" fill="#ffffff" stroke="#4a9c5d" stroke-width="1.5"/>
+  <text x="252" y="167" font-size="15" font-weight="bold" fill="#1a1a1a">035</text>
+  <path d="M312 163 L316 168 L324 157" fill="none" stroke="#4a9c5d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- decoy 1: date -->
+  <rect x="243" y="186" width="72" height="18" rx="2" fill="#ffffff" stroke="#c0554d" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <text x="249" y="199" font-size="11" fill="#6b7178">12-07-26</text>
+  <path d="M322 190 L332 200 M332 190 L322 200" stroke="#c0554d" stroke-width="2" stroke-linecap="round"/>
+  <text x="40" y="196" font-size="8.5" fill="#c0554d">date field: strips to a stable</text>
+  <text x="40" y="207" font-size="8.5" fill="#c0554d">3-digit read, sits below the band</text>
+
+  <!-- body lines -->
+  <rect x="40" y="222" width="200" height="6" rx="2" fill="#e6e9ec"/>
+  <rect x="40" y="238" width="240" height="6" rx="2" fill="#e6e9ec"/>
+  <rect x="40" y="254" width="180" height="6" rx="2" fill="#e6e9ec"/>
+
+  <!-- decoy 2: vehicle no -->
+  <rect x="40" y="280" width="86" height="18" rx="2" fill="#ffffff" stroke="#c0554d" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <text x="46" y="293" font-size="11" fill="#6b7178">8180</text>
+  <path d="M132 284 L142 294 M142 284 L132 294" stroke="#c0554d" stroke-width="2" stroke-linecap="round"/>
+  <text x="150" y="293" font-size="8.5" fill="#c0554d">vehicle no: a real number,</text>
+  <text x="150" y="304" font-size="8.5" fill="#c0554d">wrong field, reads consistently</text>
+
+  <rect x="40" y="326" width="220" height="6" rx="2" fill="#e6e9ec"/>
+  <rect x="40" y="342" width="150" height="6" rx="2" fill="#e6e9ec"/>
+
+  <text x="40" y="380" font-size="8.5" fill="#9aa1a9">Position alone is not enough: both rejected candidates are</text>
+  <text x="40" y="392" font-size="8.5" fill="#9aa1a9">genuine numbers that OCR reads perfectly.</text>
+
+  <!-- ============ decision flow ============ -->
+  <g font-size="11">
+    <!-- step 1 -->
+    <rect x="400" y="96" width="220" height="42" rx="4" fill="#f4f6f8" stroke="#c9ced4"/>
+    <text x="412" y="114" font-weight="bold" fill="#1a1a1a">1. detect</text>
+    <text x="412" y="130" font-size="9.5" fill="#5f6368">size + digit count + position band</text>
+
+    <path d="M510 138 L510 158" stroke="#9aa1a9" stroke-width="1.4" marker-end="url(#a)"/>
+
+    <!-- step 2 -->
+    <rect x="400" y="158" width="220" height="42" rx="4" fill="#f4f6f8" stroke="#c9ced4"/>
+    <text x="412" y="176" font-weight="bold" fill="#1a1a1a">2. recognize x3 zoom</text>
+    <text x="412" y="192" font-size="9.5" fill="#5f6368">three independent reads of one crop</text>
+
+    <path d="M510 200 L510 220" stroke="#9aa1a9" stroke-width="1.4" marker-end="url(#a)"/>
+
+    <!-- step 3 gate -->
+    <rect x="400" y="220" width="220" height="56" rx="4" fill="#eef2f6" stroke="#1c4f7c" stroke-width="1.4"/>
+    <text x="412" y="238" font-weight="bold" fill="#1c4f7c">3. gate</text>
+    <text x="412" y="253" font-size="9.5" fill="#33495e">all three reads agree with each</text>
+    <text x="412" y="265" font-size="9.5" fill="#33495e">other AND with the nomination?</text>
+
+    <!-- branches -->
+    <path d="M455 276 L455 300" stroke="#9aa1a9" stroke-width="1.4" marker-end="url(#a)"/>
+    <path d="M565 276 L565 300" stroke="#9aa1a9" stroke-width="1.4" marker-end="url(#a)"/>
+    <text x="400" y="292" font-size="9" fill="#4a9c5d">agree</text>
+    <text x="575" y="292" font-size="9" fill="#c07a2d">disagree</text>
+
+    <rect x="380" y="300" width="150" height="36" rx="4" fill="#e8f3ea" stroke="#4a9c5d"/>
+    <text x="392" y="318" font-size="10.5" font-weight="bold" fill="#3f7a4e">file it</text>
+    <text x="392" y="331" font-size="9" fill="#3f7a4e">scanned/&lt;type&gt;/035.pdf</text>
+
+    <rect x="545" y="300" width="150" height="36" rx="4" fill="#fdf3e6" stroke="#c07a2d"/>
+    <text x="557" y="318" font-size="10.5" font-weight="bold" fill="#9c5f1d">second opinion</text>
+    <text x="557" y="331" font-size="9" fill="#9c5f1d">CRNN / AI assist</text>
+
+    <path d="M620 336 L620 356" stroke="#9aa1a9" stroke-width="1.4" marker-end="url(#a)"/>
+    <rect x="545" y="356" width="150" height="48" rx="4" fill="#f4f6f8" stroke="#c9ced4"/>
+    <text x="557" y="373" font-size="10" fill="#1a1a1a">confirms an existing</text>
+    <text x="557" y="386" font-size="10" fill="#1a1a1a">candidate -&gt; file</text>
+    <text x="557" y="399" font-size="10" fill="#5f6368">otherwise -&gt; review</text>
+  </g>
+
+  <rect x="400" y="420" width="470" height="34" rx="4" fill="#f4f6f8" stroke="#c9ced4"/>
+  <text x="412" y="434" font-size="9.5" font-weight="bold" fill="#1a1a1a">The asymmetry the whole design rests on:</text>
+  <text x="412" y="447" font-size="9.5" fill="#5f6368">a wrong number is silent corruption; a review page costs a minute. Never guess.</text>
+
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0 1 L6 4 L0 7 z" fill="#9aa1a9"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,32 @@
+# ECR document pipeline -- Python 3.12
+#
+# Python 3.12 specifically: 3.14 has no wheels for onnxruntime, which is what
+# blocked an earlier attempt.
+#
+#   py -3.12 -m venv .venv
+#   .venv\Scripts\python -m pip install -r requirements.txt
+
+pymupdf==1.28.0                  # PDF -> pixels; no poppler dependency
+opencv-python-headless==5.0.0.93 # template matching, preprocessing
+numpy==2.5.1
+pillow==12.3.0
+
+# OCR. RapidOCR runs the PP-OCR models on ONNX Runtime, giving PaddleOCR
+# quality without the PaddlePaddle dependency (which has no wheel here).
+# Measured 87.6% recall on our crops vs 74.4% EasyOCR, 27.3% Tesseract.
+rapidocr-onnxruntime==1.4.4
+
+python-dotenv==1.2.2             # reads GEMINI_API_KEY for the optional AI assist
+
+# Desktop review UI
+pywebview==6.2.1
+
+# Optional: the AI assist pass in the review UI. Without a GEMINI_API_KEY the
+# pipeline runs normally and the assist button is simply unavailable.
+google-genai==2.17.0
+
+# Training the CRNN digit model is a separate, training-time-only concern --
+# `torch` and `onnx` are never imported by main.py or anything it calls.
+# See training/ and install them only if retraining:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+#   pip install onnx

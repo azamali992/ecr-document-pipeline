@@ -1,0 +1,223 @@
+<title>Peshawar Bundle Extraction (beta)</title>
+<link rel="stylesheet" href="style.css">
+
+<div class="app">
+  <nav class="tabs">
+    <button class="tab active" data-view="run">Run</button>
+    <button class="tab" data-view="review">Review</button>
+    <button class="tab" data-view="scanned">Scanned</button>
+    <button class="tab" data-view="discarded">Discarded</button>
+    <button class="tab" data-view="anomalies">Duplicates</button>
+  </nav>
+
+  <section id="view-run" class="view active">
+    <div class="panel">
+      <h2>Pick a month</h2>
+      <div class="row">
+        <button id="refresh-months">Refresh</button>
+      </div>
+      <div id="month-list" class="review-list"></div>
+
+      <h2>Process the selected month's bundle</h2>
+      <p id="input-path" class="muted"></p>
+      <p id="client-status" class="muted"></p>
+      <label class="checkbox-row">
+        <input type="checkbox" id="restart-checkbox">
+        Restart (reprocess every file, even ones already done)
+      </label>
+      <label class="workers-row">
+        Parallel workers
+        <input type="number" id="workers-input" min="1" max="64">
+        <span id="workers-hint" class="muted"></span>
+      </label>
+      <button id="run-button" class="primary">Run</button>
+      <div class="row">
+        <button id="pause-button" class="hidden">Pause</button>
+        <button id="stop-button" class="hidden">Stop</button>
+      </div>
+      <p id="run-status" class="muted"></p>
+    </div>
+
+    <div class="panel">
+      <h2>Progress</h2>
+      <div class="counts">
+        <div class="count-tile renamed"><span id="count-scanned">0</span><label>scanned</label></div>
+        <div class="count-tile discarded"><span id="count-discarded">0</span><label>discarded</label></div>
+        <div class="count-tile review"><span id="count-review">0</span><label>review</label></div>
+        <div class="count-tile error"><span id="count-error">0</span><label>error</label></div>
+      </div>
+      <div class="progress-bar"><div id="progress-fill"></div></div>
+      <p id="progress-label" class="muted">Not started</p>
+      <div id="log" class="log"></div>
+    </div>
+  </section>
+
+  <section id="view-review" class="view">
+    <div class="panel review-sidebar">
+      <h2>Review queue</h2>
+      <div class="row">
+        <button id="refresh-review">Refresh</button>
+        <button id="run-ai-review" class="hidden">Run AI on queue</button>
+      </div>
+      <p id="ai-status" class="muted hidden"></p>
+      <p id="review-count" class="muted"></p>
+      <div id="review-list" class="review-list"></div>
+    </div>
+
+    <div class="panel review-main">
+      <div id="review-empty" class="muted">No page selected -- pick one from the list.</div>
+      <div id="review-item" class="hidden">
+        <div class="review-image-wrap">
+          <img id="review-image" alt="scanned page">
+        </div>
+        <div class="review-form">
+          <p class="muted" id="review-filename"></p>
+          <div class="row">
+            <button id="rotate-left" title="Rotate left 90&deg;">&#8634; Rotate left</button>
+            <button id="rotate-right" title="Rotate right 90&deg;">&#8635; Rotate right</button>
+          </div>
+          <label>
+            Number
+            <input type="text" id="review-number" placeholder="e.g. 035" inputmode="numeric">
+          </label>
+          <label>
+            Book type
+            <select id="review-type"></select>
+          </label>
+          <div class="row">
+            <button id="review-submit" class="primary">Confirm &amp; file</button>
+            <button id="review-skip">Skip for now</button>
+            <button id="review-discard" class="danger" title="Not an ECR/DC page at all">Discard</button>
+          </div>
+          <p id="review-feedback"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-scanned" class="view">
+    <div class="panel review-sidebar">
+      <h2>Scanned</h2>
+      <button id="refresh-scanned">Refresh</button>
+      <div id="scanned-type-list" class="review-list"></div>
+      <p id="scanned-count" class="muted"></p>
+      <div id="scanned-list" class="review-list"></div>
+    </div>
+
+    <div class="panel review-main">
+      <div id="scanned-empty" class="muted">Pick a book type, then select a page from the list.</div>
+      <div id="scanned-item" class="hidden">
+        <div class="review-image-wrap">
+          <img id="scanned-image" alt="scanned page">
+        </div>
+        <div class="review-form">
+          <p class="muted" id="scanned-filename"></p>
+          <div class="row">
+            <button id="scanned-rotate-left" title="Rotate left 90&deg;">&#8634; Rotate left</button>
+            <button id="scanned-rotate-right" title="Rotate right 90&deg;">&#8635; Rotate right</button>
+          </div>
+          <label>
+            Number
+            <input type="text" id="scanned-number" placeholder="e.g. 035" inputmode="numeric">
+          </label>
+          <label>
+            Book type
+            <select id="scanned-type"></select>
+          </label>
+          <div class="row">
+            <button id="scanned-save" class="primary">Save correction</button>
+            <button id="scanned-skip">Skip for now</button>
+            <button id="scanned-discard" class="danger" title="Not an ECR/DC page at all">Discard</button>
+          </div>
+          <p id="scanned-feedback"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-discarded" class="view">
+    <div class="panel review-sidebar">
+      <h2>Discarded</h2>
+      <p class="muted">Pages the pipeline decided weren't ECR/DC pages at all. Scroll through to catch any that were wrongly discarded.</p>
+      <button id="refresh-discarded">Refresh</button>
+      <p id="discarded-count" class="muted"></p>
+      <div id="discarded-list" class="review-list"></div>
+    </div>
+
+    <div class="panel review-main">
+      <div id="discarded-empty" class="muted">No page selected -- pick one from the list.</div>
+      <div id="discarded-item" class="hidden">
+        <div class="review-image-wrap">
+          <img id="discarded-image" alt="scanned page">
+        </div>
+        <div class="review-form">
+          <p class="muted" id="discarded-filename"></p>
+          <p class="muted" id="discarded-reason"></p>
+          <div class="row">
+            <button id="discarded-rotate-left" title="Rotate left 90&deg;">&#8634; Rotate left</button>
+            <button id="discarded-rotate-right" title="Rotate right 90&deg;">&#8635; Rotate right</button>
+          </div>
+          <label>
+            Number
+            <input type="text" id="discarded-number" placeholder="e.g. 035" inputmode="numeric">
+          </label>
+          <label>
+            Book type
+            <select id="discarded-type"></select>
+          </label>
+          <div class="row">
+            <button id="discarded-restore" class="primary">Restore to Scanned</button>
+            <button id="discarded-skip">Skip for now</button>
+          </div>
+          <p id="discarded-feedback"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-anomalies" class="view">
+    <div class="panel review-sidebar">
+      <h2>Duplicates &amp; outliers</h2>
+      <p class="muted">A book number should be near-unique and inside the book's range.
+        A value filed many times, or far outside it, usually means the wrong field was read.</p>
+      <button id="refresh-anomalies">Refresh</button>
+      <p id="anomaly-count" class="muted"></p>
+      <div id="anomaly-group-list" class="review-list"></div>
+      <p id="anomaly-item-count" class="muted"></p>
+      <div id="anomaly-item-list" class="review-list"></div>
+    </div>
+
+    <div class="panel review-main">
+      <div id="anomaly-empty" class="muted">Pick a number from the list to see the pages filed under it.</div>
+      <div id="anomaly-item" class="hidden">
+        <div class="review-image-wrap">
+          <img id="anomaly-image" alt="scanned page">
+        </div>
+        <div class="review-form">
+          <p class="muted" id="anomaly-filename"></p>
+          <p class="muted" id="anomaly-why"></p>
+          <div class="row">
+            <button id="anomaly-rotate-left" title="Rotate left 90&deg;">&#8634; Rotate left</button>
+            <button id="anomaly-rotate-right" title="Rotate right 90&deg;">&#8635; Rotate right</button>
+          </div>
+          <label>
+            Number
+            <input type="text" id="anomaly-number" placeholder="e.g. 035" inputmode="numeric">
+          </label>
+          <label>
+            Book type
+            <select id="anomaly-type"></select>
+          </label>
+          <div class="row">
+            <button id="anomaly-save" class="primary">Save correction</button>
+            <button id="anomaly-skip">Skip</button>
+            <button id="anomaly-discard" class="danger">Discard</button>
+          </div>
+          <p id="anomaly-feedback"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="app.js"></script>

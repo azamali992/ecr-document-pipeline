@@ -1,0 +1,50 @@
+# ---------------------------------------------------------------------------
+# This repository is code and models ONLY. No client documents, ever.
+# ---------------------------------------------------------------------------
+
+# Scanned input and processed output -- real business documents
+incoming/
+archive/
+output*/
+peshawar_output/
+reports/
+review/
+scanned/
+discarded/
+*.pdf
+*.rar
+*.zip
+
+# Business data
+*.xlsx
+*.xls
+*.csv
+
+# Run state, ledgers, logs
+*.log
+*.db
+state.db
+.suggestions.json
+.gemini_usage.json
+results.csv
+
+# Secrets
+.env
+
+# Training artefacts (regenerate with training/)
+training/glyphs/
+training/synth/
+training/checkpoints/
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+.venv*/
+venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
